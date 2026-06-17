@@ -4,9 +4,725 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PlateNurture AI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #2E7D32;
+      --green-light: #4CAF50;
+      --green-pale: #E8F5E9;
+      --orange: #E65100;
+      --orange-light: #FF7043;
+      --orange-pale: #FBE9E7;
+      --gray-dark: #1C1C1E;
+      --gray-mid: #6B6B6B;
+      --gray-light: #F5F5F5;
+      --white: #FFFFFF;
+      --danger: #D32F2F;
+      --warning: #F57C00;
+      --safe: #2E7D32;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--gray-light);
+      color: var(--gray-dark);
+      min-height: 100vh;
+    }
+
+    /* ── 헤더 ── */
+    header {
+      background: var(--white);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--gray-dark);
+      line-height: 1.2;
+    }
+
+    .logo-text p {
+      font-size: 11px;
+      color: var(--gray-mid);
+    }
+
+    .header-user {
+      width: 38px;
+      height: 38px;
+      background: var(--green-pale);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    /* ── 환자 정보 배너 ── */
+    .patient-banner {
+      background: linear-gradient(135deg, var(--green), #388E3C);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .patient-info h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .patient-info p {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    .condition-badges {
+      display: flex;
+      gap: 6px;
+    }
+
+    .badge {
+      background: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ── 오늘 영양 요약 ── */
+    .daily-summary {
+      background: var(--white);
+      margin: 12px 16px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-mid);
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    .nutrient-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .nutrient-card {
+      background: var(--gray-light);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .nutrient-card.danger { background: var(--orange-pale); }
+    .nutrient-card.safe { background: var(--green-pale); }
+
+    .nutrient-label {
+      font-size: 12px;
+      color: var(--gray-mid);
+      margin-bottom: 4px;
+    }
+
+    .nutrient-value {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .nutrient-card.danger .nutrient-value { color: var(--danger); }
+    .nutrient-card.safe .nutrient-value { color: var(--safe); }
+
+    .nutrient-unit {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--gray-mid);
+    }
+
+    .nutrient-limit {
+      font-size: 11px;
+      color: var(--gray-mid);
+      margin-top: 4px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 3px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .danger .progress-fill { background: var(--danger); }
+    .safe .progress-fill { background: var(--safe); }
+
+    /* ── 위험 알림 ── */
+    .alert-box {
+      margin: 0 16px 12px;
+      background: var(--orange-pale);
+      border: 1px solid #FFCCBC;
+      border-left: 4px solid var(--orange);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-icon { font-size: 22px; flex-shrink: 0; }
+
+    .alert-text h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 3px;
+    }
+
+    .alert-text p {
+      font-size: 13px;
+      color: var(--gray-dark);
+      line-height: 1.5;
+    }
+
+    /* ── 사진 촬영 버튼 ── */
+    .camera-section {
+      margin: 0 16px 12px;
+    }
+
+    .camera-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(46,125,50,0.3);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .camera-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(46,125,50,0.2);
+    }
+
+    .camera-btn-icon { font-size: 28px; }
+
+    /* ── 오늘 식사 기록 ── */
+    .meal-log {
+      background: var(--white);
+      margin: 0 16px 12px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .meal-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-light);
+    }
+
+    .meal-item:last-child { border-bottom: none; }
+
+    .meal-emoji {
+      width: 44px;
+      height: 44px;
+      background: var(--gray-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .meal-info { flex: 1; }
+
+    .meal-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .meal-time {
+      font-size: 12px;
+      color: var(--gray-mid);
+    }
+
+    .meal-nutrients {
+      text-align: right;
+    }
+
+    .meal-cal {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-dark);
+    }
+
+    .meal-sodium {
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .meal-sodium.high { color: var(--danger); }
+    .meal-sodium.ok { color: var(--safe); }
+
+    /* ── 맞춤 식단 추천 ── */
+    .recommend-section {
+      background: var(--white);
+      margin: 0 16px 12px;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .recommend-card {
+      background: var(--green-pale);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .recommend-card:last-child { margin-bottom: 0; }
+
+    .recommend-emoji { font-size: 32px; flex-shrink: 0; }
+
+    .recommend-info h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .recommend-info p {
+      font-size: 12px;
+      color: var(--gray-mid);
+      line-height: 1.4;
+    }
+
+    .recommend-tag {
+      margin-left: auto;
+      background: var(--green);
+      color: white;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ── 분석 결과 모달 ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 24px 24px 0 0;
+      padding: 20px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background: #E0E0E0;
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .analysis-food {
+      background: var(--gray-light);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .analysis-food-emoji { font-size: 48px; }
+
+    .analysis-food-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .analysis-food-amount {
+      font-size: 14px;
+      color: var(--gray-mid);
+      margin-top: 4px;
+    }
+
+    .analysis-nutrients {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .analysis-nutrient {
+      background: var(--gray-light);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .analysis-nutrient.warn { background: var(--orange-pale); }
+
+    .an-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .analysis-nutrient.warn .an-value { color: var(--danger); }
+
+    .an-label {
+      font-size: 11px;
+      color: var(--gray-mid);
+      margin-top: 3px;
+    }
+
+    .diagnosis-box {
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .diagnosis-box.danger-box {
+      background: var(--orange-pale);
+      border: 1px solid #FFCCBC;
+    }
+
+    .diagnosis-box.safe-box {
+      background: var(--green-pale);
+      border: 1px solid #C8E6C9;
+    }
+
+    .diagnosis-box h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .danger-box h4 { color: var(--orange); }
+    .safe-box h4 { color: var(--safe); }
+
+    .diagnosis-box p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--gray-dark);
+    }
+
+    .modal-close-btn {
+      width: 100%;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    /* ── 하단 여백 ── */
+    .bottom-space { height: 24px; }
+
+    /* ── 파일 입력 숨김 ── */
+    #photo-input { display: none; }
+  </style>
 </head>
 <body>
-  <h1>PlateNurture AI</h1>
-  <p>준비 중입니다.</p>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">
+        <h1>PlateNurture AI</h1>
+        <p>맞춤 식단 건강관리</p>
+      </div>
+    </div>
+    <div class="header-user">👴</div>
+  </header>
+
+  <!-- 환자 정보 배너 -->
+  <div class="patient-banner">
+    <div class="patient-info">
+      <h2>김영수 어르신 (78세)</h2>
+      <p>오늘도 건강한 식사를 해요 💚</p>
+    </div>
+    <div class="condition-badges">
+      <span class="badge">고혈압</span>
+      <span class="badge">당뇨</span>
+    </div>
+  </div>
+
+  <!-- 위험 알림 -->
+  <div class="alert-box">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-text">
+      <h3>나트륨 주의</h3>
+      <p>오늘 나트륨 섭취량이 권장량의 91%에 달했습니다. 저녁은 싱겁게 드세요.</p>
+    </div>
+  </div>
+
+  <!-- 오늘 영양 요약 -->
+  <div class="daily-summary">
+    <div class="section-title">오늘의 영양 현황</div>
+    <div class="nutrient-grid">
+      <div class="nutrient-card danger">
+        <div class="nutrient-label">나트륨</div>
+        <div class="nutrient-value">1,820<span class="nutrient-unit">mg</span></div>
+        <div class="nutrient-limit">권장: 2,000mg 이하</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 91%"></div>
+        </div>
+      </div>
+      <div class="nutrient-card danger">
+        <div class="nutrient-label">당류</div>
+        <div class="nutrient-value">38<span class="nutrient-unit">g</span></div>
+        <div class="nutrient-limit">권장: 50g 이하</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 76%"></div>
+        </div>
+      </div>
+      <div class="nutrient-card safe">
+        <div class="nutrient-label">칼로리</div>
+        <div class="nutrient-value">1,420<span class="nutrient-unit">kcal</span></div>
+        <div class="nutrient-limit">권장: 1,800kcal</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 79%"></div>
+        </div>
+      </div>
+      <div class="nutrient-card safe">
+        <div class="nutrient-label">단백질</div>
+        <div class="nutrient-value">52<span class="nutrient-unit">g</span></div>
+        <div class="nutrient-limit">권장: 60g</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 87%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사진 촬영 버튼 -->
+  <div class="camera-section">
+    <button class="camera-btn" onclick="document.getElementById('photo-input').click()">
+      <span class="camera-btn-icon">📷</span>
+      <span>식사 사진 찍어서 분석하기</span>
+    </button>
+    <input type="file" id="photo-input" accept="image/*" capture="environment" onchange="analyzePhoto(this)">
+  </div>
+
+  <!-- 오늘 식사 기록 -->
+  <div class="meal-log">
+    <div class="section-title">오늘 식사 기록</div>
+    <div class="meal-item">
+      <div class="meal-emoji">🍚</div>
+      <div class="meal-info">
+        <div class="meal-name">현미밥 + 된장찌개</div>
+        <div class="meal-time">아침 · 오전 8:20</div>
+      </div>
+      <div class="meal-nutrients">
+        <div class="meal-cal">480 kcal</div>
+        <div class="meal-sodium high">나트륨 920mg ↑</div>
+      </div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-emoji">🥗</div>
+      <div class="meal-info">
+        <div class="meal-name">잡곡밥 + 나물무침</div>
+        <div class="meal-time">점심 · 오후 12:35</div>
+      </div>
+      <div class="meal-nutrients">
+        <div class="meal-cal">540 kcal</div>
+        <div class="meal-sodium ok">나트륨 620mg ✓</div>
+      </div>
+    </div>
+    <div class="meal-item">
+      <div class="meal-emoji">🍎</div>
+      <div class="meal-info">
+        <div class="meal-name">사과 1개</div>
+        <div class="meal-time">간식 · 오후 3:10</div>
+      </div>
+      <div class="meal-nutrients">
+        <div class="meal-cal">80 kcal</div>
+        <div class="meal-sodium ok">나트륨 0mg ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 맞춤 식단 추천 -->
+  <div class="recommend-section">
+    <div class="section-title">오늘 저녁 식단 추천</div>
+    <div class="recommend-card">
+      <div class="recommend-emoji">🐟</div>
+      <div class="recommend-info">
+        <h4>생선구이 + 두부조림</h4>
+        <p>저염·저당 / 나트륨 400mg 이하 / 단백질 보충</p>
+      </div>
+      <div class="recommend-tag">추천</div>
+    </div>
+    <div class="recommend-card">
+      <div class="recommend-emoji">🥦</div>
+      <div class="recommend-info">
+        <h4>잡곡밥 + 채소볶음</h4>
+        <p>혈당 관리 / 식이섬유 풍부 / 칼로리 낮음</p>
+      </div>
+      <div class="recommend-tag">추천</div>
+    </div>
+  </div>
+
+  <div class="bottom-space"></div>
+
+  <!-- 분석 결과 모달 -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title">🔍 AI 식단 분석 결과</div>
+
+      <div class="analysis-food">
+        <div class="analysis-food-emoji">🍱</div>
+        <div class="analysis-food-name">비빔밥</div>
+        <div class="analysis-food-amount">1인분 (약 450g)</div>
+      </div>
+
+      <div class="analysis-nutrients">
+        <div class="analysis-nutrient">
+          <div class="an-value">520</div>
+          <div class="an-label">칼로리(kcal)</div>
+        </div>
+        <div class="analysis-nutrient warn">
+          <div class="an-value">980</div>
+          <div class="an-label">나트륨(mg)</div>
+        </div>
+        <div class="analysis-nutrient">
+          <div class="an-value">18</div>
+          <div class="an-label">당류(g)</div>
+        </div>
+        <div class="analysis-nutrient">
+          <div class="an-value">72</div>
+          <div class="an-label">탄수화물(g)</div>
+        </div>
+        <div class="analysis-nutrient">
+          <div class="an-value">22</div>
+          <div class="an-label">단백질(g)</div>
+        </div>
+        <div class="analysis-nutrient">
+          <div class="an-value">14</div>
+          <div class="an-label">지방(g)</div>
+        </div>
+      </div>
+
+      <div class="diagnosis-box danger-box">
+        <h4>⚠️ 고혈압 주의</h4>
+        <p>나트륨 980mg은 하루 권장량(2,000mg)의 49%입니다. 오늘 다른 식사에서 나트륨을 줄이는 것을 권장합니다.</p>
+      </div>
+
+      <div class="diagnosis-box safe-box">
+        <h4>✅ 당뇨 양호</h4>
+        <p>당류 18g으로 혈당 부담이 적습니다. 채소 비율이 높아 당뇨 식단에 적합합니다.</p>
+      </div>
+
+      <button class="modal-close-btn" onclick="closeModalBtn()">확인했습니다</button>
+    </div>
+  </div>
+
+  <script>
+    function analyzePhoto(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('modal').classList.add('active');
+      }
+    }
+
+    function closeModal(event) {
+      if (event.target === document.getElementById('modal')) {
+        document.getElementById('modal').classList.remove('active');
+      }
+    }
+
+    function closeModalBtn() {
+      document.getElementById('modal').classList.remove('active');
+    }
+  </script>
+
 </body>
 </html>
