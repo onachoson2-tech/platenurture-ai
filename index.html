@@ -440,12 +440,30 @@
     let todayNutrition = { sodium: 0, sugar: 0, cal: 0, protein: 0 };
     let selectedDiseases = { hyp: false, dia: false };
 
+    // 오늘 날짜 키 생성 (날짜가 바뀌면 자동 초기화)
+    function getTodayKey() {
+      const d = new Date();
+      return `meals_${d.getFullYear()}_${d.getMonth()+1}_${d.getDate()}`;
+    }
+
+    // 식사 기록 저장
+    function saveMeals(meals) {
+      localStorage.setItem(getTodayKey(), JSON.stringify(meals));
+    }
+
+    // 식사 기록 불러오기
+    function loadMeals() {
+      const saved = localStorage.getItem(getTodayKey());
+      return saved ? JSON.parse(saved) : [];
+    }
+
     // ── 앱 초기화 ──────────────────────────────
     function init() {
       const saved = localStorage.getItem('patient_info');
       if (saved) {
         patient = JSON.parse(saved);
         showMainScreen();
+        loadSavedMeals(); // 저장된 식사 기록 복원
       } else {
         showSetupScreen();
       }
@@ -454,6 +472,42 @@
         document.getElementById('api-setup-box').style.background = '#E8F5E9';
         document.getElementById('api-setup-box').style.borderColor = '#A5D6A7';
       }
+    }
+
+    // 저장된 식사 기록 화면에 복원
+    function loadSavedMeals() {
+      const meals = loadMeals();
+      if (meals.length === 0) return;
+
+      const mealList = document.getElementById('meal-list');
+      // 빈 상태 메시지 제거
+      mealList.innerHTML = '';
+
+      meals.forEach(food => {
+        // 영양 누적 복원
+        todayNutrition.sodium += Number(food.sodium) || 0;
+        todayNutrition.sugar += Number(food.sugar) || 0;
+        todayNutrition.cal += Number(food.cal) || 0;
+        todayNutrition.protein += Number(food.protein) || 0;
+
+        // 화면에 아이템 추가
+        const item = document.createElement('div');
+        item.className = 'meal-item';
+        const sodiumHigh = food.sodium >= 600;
+        item.innerHTML = `
+          <div class="meal-emoji">${food.emoji || '🍽️'}</div>
+          <div class="meal-info">
+            <div class="meal-name">${food.name}</div>
+            <div class="meal-time">${food.timeStr || ''}</div>
+          </div>
+          <div class="meal-nutrients">
+            <div class="meal-cal">${food.cal} kcal</div>
+            <div class="meal-sodium ${sodiumHigh ? 'high' : 'ok'}">나트륨 ${Number(food.sodium).toLocaleString()}mg ${sodiumHigh ? '↑' : '✓'}</div>
+          </div>`;
+        mealList.appendChild(item);
+      });
+
+      updateNutritionDisplay();
     }
 
     // ── 설정 화면 ──────────────────────────────
@@ -804,6 +858,11 @@
       const h12 = h > 12 ? h - 12 : h;
       const timeStr = `방금 · ${period} ${h12}:${m}`;
       const sodiumHigh = food.sodium >= 600;
+
+      // localStorage에 저장
+      const meals = loadMeals();
+      meals.push({ ...food, timeStr });
+      saveMeals(meals);
 
       const item = document.createElement('div');
       item.className = 'meal-item';
