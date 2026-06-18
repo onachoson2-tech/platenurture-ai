@@ -418,6 +418,7 @@
         <div class="analysis-food-emoji" id="food-emoji">🍽️</div>
         <div class="analysis-food-name" id="food-name">분석 중...</div>
         <div class="analysis-food-amount" id="food-amount"></div>
+        <button onclick="editFoodName()" style="margin-top:10px;background:none;border:1px solid #ccc;border-radius:8px;padding:6px 14px;font-size:13px;color:#6B6B6B;font-family:Noto Sans KR,sans-serif;cursor:pointer;">✏️ 음식명 수정</button>
       </div>
       <div class="analysis-nutrients">
         <div class="analysis-nutrient" id="n-cal"><div class="an-value" id="v-cal">-</div><div class="an-label">칼로리(kcal)</div></div>
@@ -782,6 +783,7 @@
     }
 
     function showResult(food) {
+      currentFood = food;
       document.getElementById('food-emoji').textContent = food.emoji || '🍽️';
       document.getElementById('food-name').textContent = food.name || '음식';
       document.getElementById('food-amount').textContent = food.amount || '';
@@ -891,6 +893,32 @@
       if (event.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('active');
     }
     function closeModalBtn() { document.getElementById('modal').classList.remove('active'); }
+
+    // 음식명 수정
+    let currentFood = null;
+    function editFoodName() {
+      const current = document.getElementById("food-name").textContent;
+      const newName = prompt("음식 이름을 수정하세요:", current);
+      if (newName && newName.trim() && newName.trim() !== current) {
+        document.getElementById("food-name").textContent = newName.trim();
+        if (currentFood) {
+          currentFood.name = newName.trim();
+          // localStorage 마지막 기록도 업데이트
+          const meals = loadMeals();
+          if (meals.length > 0) {
+            meals[meals.length - 1].name = newName.trim();
+            saveMeals(meals);
+            // 화면의 마지막 식사 기록도 업데이트
+            const items = document.querySelectorAll(".meal-item");
+            if (items.length > 0) {
+              const last = items[items.length - 1];
+              const nameEl = last.querySelector(".meal-name");
+              if (nameEl) nameEl.textContent = newName.trim();
+            }
+          }
+        }
+      }
+    }
 
     // 시작
     init();
