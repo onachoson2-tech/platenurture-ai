@@ -52,27 +52,16 @@
     }
     .setup-input:focus { border-color: var(--green); }
     .setup-input.age-input { width: 100px; }
-
     .disease-toggles { display: flex; gap: 10px; }
     .disease-btn {
       flex: 1; padding: 14px;
       border: 2px solid #E0E0E0; border-radius: 12px;
       background: white; font-size: 15px; font-weight: 600;
       font-family: 'Noto Sans KR', sans-serif;
-      cursor: pointer; transition: all 0.2s;
-      color: var(--gray-mid);
+      cursor: pointer; transition: all 0.2s; color: var(--gray-mid);
     }
-    .disease-btn.active {
-      border-color: var(--green);
-      background: var(--green-pale);
-      color: var(--green);
-    }
-    .disease-btn.active-orange {
-      border-color: var(--orange);
-      background: var(--orange-pale);
-      color: var(--orange);
-    }
-
+    .disease-btn.active { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+    .disease-btn.active-orange { border-color: var(--orange); background: var(--orange-pale); color: var(--orange); }
     .setup-btn {
       width: 100%; padding: 18px;
       background: linear-gradient(135deg, var(--green), var(--green-light));
@@ -85,7 +74,6 @@
 
     /* ── 메인 화면 ── */
     .main-screen { display: none; }
-
     header {
       background: var(--white); padding: 16px 20px;
       display: flex; align-items: center; justify-content: space-between;
@@ -106,10 +94,8 @@
       background: var(--green-pale); border: none;
       border-radius: 20px; padding: 8px 14px;
       font-size: 13px; font-weight: 600; color: var(--green);
-      font-family: 'Noto Sans KR', sans-serif;
-      cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif; cursor: pointer;
     }
-
     .patient-banner {
       background: linear-gradient(135deg, #1B5E20, var(--green));
       color: white; padding: 18px 20px;
@@ -124,7 +110,6 @@
       border-radius: 20px; padding: 5px 12px;
       font-size: 13px; font-weight: 600;
     }
-
     .card {
       background: var(--white); margin: 12px 16px;
       border-radius: 16px; padding: 16px;
@@ -134,7 +119,6 @@
       font-size: 13px; font-weight: 700; color: var(--gray-mid);
       letter-spacing: 0.5px; margin-bottom: 14px; text-transform: uppercase;
     }
-
     .alert-box {
       margin: 12px 16px 0; background: var(--orange-pale);
       border-left: 4px solid var(--orange); border-radius: 12px;
@@ -143,7 +127,6 @@
     .alert-icon { font-size: 24px; flex-shrink: 0; margin-top: 1px; }
     .alert-text h3 { font-size: 15px; font-weight: 700; color: var(--orange); margin-bottom: 4px; }
     .alert-text p { font-size: 14px; line-height: 1.5; }
-
     .nutrient-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .nutrient-card { border-radius: 12px; padding: 14px; }
     .nutrient-card.danger { background: var(--orange-pale); }
@@ -158,7 +141,6 @@
     .progress-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
     .danger .progress-fill { background: var(--danger); }
     .safe .progress-fill { background: var(--safe); }
-
     .camera-btn {
       width: 100%;
       background: linear-gradient(135deg, var(--green), var(--green-light));
@@ -172,11 +154,42 @@
     .camera-btn-icon { font-size: 30px; }
     #photo-input { display: none; }
 
+    /* ── 식사 기록 — 스와이프 삭제 ── */
+    .meal-item-wrap {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .meal-item-wrap:last-child { border-bottom: none; }
+
+    /* 뒤에 깔리는 빨간 삭제 버튼 */
+    .meal-delete-bg {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 80px;
+      background: var(--danger);
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 0 12px 12px 0;
+    }
+    .meal-delete-bg span {
+      color: white; font-size: 13px; font-weight: 700;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .meal-delete-bg span::before { content: '🗑️'; font-size: 20px; }
+
+    /* 실제 카드 — 터치로 밀림 */
     .meal-item {
       display: flex; align-items: center; gap: 12px;
-      padding: 12px 0; border-bottom: 1px solid var(--gray-light);
+      padding: 12px 0;
+      background: var(--white);
+      position: relative;
+      transition: transform 0.25s ease;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
     }
-    .meal-item:last-child { border-bottom: none; }
+    .meal-item.swiped { transform: translateX(-80px); }
+
     .meal-emoji {
       width: 48px; height: 48px; background: var(--gray-light);
       border-radius: 12px; display: flex; align-items: center;
@@ -205,7 +218,6 @@
       border-radius: 8px; padding: 5px 10px;
       font-size: 12px; font-weight: 700; flex-shrink: 0;
     }
-
     .loading-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.75);
       z-index: 300; display: none; flex-direction: column;
@@ -221,7 +233,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { color: white; font-size: 18px; font-weight: 700; text-align: center; }
     .loading-steps { color: rgba(255,255,255,0.75); font-size: 14px; text-align: center; }
-
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.5);
       z-index: 200; display: none; align-items: flex-end;
@@ -235,7 +246,6 @@
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     .modal-handle { width: 40px; height: 4px; background: #E0E0E0; border-radius: 2px; margin: 0 auto 16px; }
     .modal-title { font-size: 19px; font-weight: 700; margin-bottom: 16px; text-align: center; }
-
     .analysis-food {
       background: var(--gray-light); border-radius: 16px;
       padding: 18px; text-align: center; margin-bottom: 16px;
@@ -243,7 +253,6 @@
     .analysis-food-emoji { font-size: 56px; }
     .analysis-food-name { font-size: 22px; font-weight: 700; margin-top: 8px; }
     .analysis-food-amount { font-size: 14px; color: var(--gray-mid); margin-top: 4px; }
-
     .analysis-nutrients { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
     .analysis-nutrient { background: var(--gray-light); border-radius: 12px; padding: 12px 8px; text-align: center; }
     .analysis-nutrient.warn { background: var(--orange-pale); }
@@ -252,7 +261,6 @@
     .analysis-nutrient.warn .an-value { color: var(--danger); }
     .analysis-nutrient.good .an-value { color: var(--safe); }
     .an-label { font-size: 11px; color: var(--gray-mid); margin-top: 3px; }
-
     .diagnosis-box { border-radius: 12px; padding: 16px; margin-bottom: 12px; }
     .diagnosis-box.danger-box { background: var(--orange-pale); border: 1px solid #FFCCBC; }
     .diagnosis-box.safe-box { background: var(--green-pale); border: 1px solid #C8E6C9; }
@@ -260,14 +268,12 @@
     .danger-box h4 { color: var(--orange); }
     .safe-box h4 { color: var(--safe); }
     .diagnosis-box p { font-size: 14px; line-height: 1.6; }
-
     .modal-close-btn {
       width: 100%; background: var(--green); color: white;
       border: none; border-radius: 14px; padding: 18px;
       font-size: 17px; font-weight: 700;
       font-family: 'Noto Sans KR', sans-serif; cursor: pointer; margin-top: 4px;
     }
-
     .api-setup {
       margin: 0 16px 12px; background: #E8EAF6;
       border-radius: 12px; padding: 12px 16px;
@@ -276,8 +282,15 @@
     }
     .api-setup p { font-size: 13px; color: #3949AB; }
     .api-setup span { font-size: 20px; }
-
     .bottom-space { height: 30px; }
+
+    /* 삭제 애니메이션 */
+    .meal-item-wrap.removing {
+      animation: slideOutDelete 0.3s ease forwards;
+    }
+    @keyframes slideOutDelete {
+      to { opacity: 0; max-height: 0; padding: 0; overflow: hidden; }
+    }
   </style>
 </head>
 <body>
@@ -287,18 +300,15 @@
     <div class="setup-logo">🌿</div>
     <div class="setup-title">PlateNurture AI</div>
     <div class="setup-subtitle">환자 정보를 입력하면<br>맞춤형 식단 관리를 시작합니다</div>
-
     <div class="setup-card">
       <div class="setup-field">
         <label class="setup-label">👤 환자 이름</label>
         <input class="setup-input" type="text" id="input-name" placeholder="예) 김영수" maxlength="10">
       </div>
-
       <div class="setup-field">
         <label class="setup-label">🎂 나이</label>
         <input class="setup-input age-input" type="number" id="input-age" placeholder="78" min="60" max="100">
       </div>
-
       <div class="setup-field">
         <label class="setup-label">🏥 보유 질환 (중복 선택 가능)</label>
         <div class="disease-toggles">
@@ -306,14 +316,12 @@
           <button class="disease-btn" id="btn-dia" onclick="toggleDisease('dia')">💉 당뇨</button>
         </div>
       </div>
-
       <button class="setup-btn" onclick="savePatient()">시작하기 →</button>
     </div>
   </div>
 
   <!-- ── 메인 화면 ── -->
   <div class="main-screen" id="main-screen">
-
     <header>
       <div class="logo">
         <div class="logo-icon">🌿</div>
@@ -337,7 +345,7 @@
       <div class="alert-icon">⚠️</div>
       <div class="alert-text">
         <h3 id="alert-title">나트륨 주의</h3>
-        <p id="alert-msg">오늘 나트륨 섭취량이 권장량의 91%에 달했습니다. 저녁은 싱겁게 드세요.</p>
+        <p id="alert-msg"></p>
       </div>
     </div>
 
@@ -387,7 +395,7 @@
     <div class="card">
       <div class="section-title">오늘 식사 기록</div>
       <div id="meal-list">
-        <div style="text-align:center; padding: 20px; color: var(--gray-mid); font-size:14px;">
+        <div id="meal-empty" style="text-align:center; padding: 20px; color: var(--gray-mid); font-size:14px;">
           아직 기록된 식사가 없습니다.<br>사진을 찍어서 분석해보세요 📷
         </div>
       </div>
@@ -434,7 +442,6 @@
   </div>
 
   <script>
-    // ── 상태 변수 ──────────────────────────────
     let patient = { name: '', age: '', hyp: false, dia: false };
     let GEMINI_API_KEY = localStorage.getItem('gemini_api_key') || '';
     let todayNutrition = { sodium: 0, sugar: 0, cal: 0, protein: 0 };
@@ -444,9 +451,7 @@
       const d = new Date();
       return `meals_${d.getFullYear()}_${d.getMonth()+1}_${d.getDate()}`;
     }
-    function saveMeals(meals) {
-      localStorage.setItem(getTodayKey(), JSON.stringify(meals));
-    }
+    function saveMeals(meals) { localStorage.setItem(getTodayKey(), JSON.stringify(meals)); }
     function loadMeals() {
       const saved = localStorage.getItem(getTodayKey());
       return saved ? JSON.parse(saved) : [];
@@ -455,13 +460,8 @@
     // ── 앱 초기화 ──────────────────────────────
     function init() {
       const saved = localStorage.getItem('patient_info');
-      if (saved) {
-        patient = JSON.parse(saved);
-        showMainScreen();
-        loadSavedMeals();
-      } else {
-        showSetupScreen();
-      }
+      if (saved) { patient = JSON.parse(saved); showMainScreen(); loadSavedMeals(); }
+      else showSetupScreen();
       if (GEMINI_API_KEY) {
         document.getElementById('api-status-text').textContent = '✅ Gemini AI 연결됨 — 실제 음식 인식 활성화';
         document.getElementById('api-setup-box').style.background = '#E8F5E9';
@@ -472,17 +472,27 @@
     function loadSavedMeals() {
       const meals = loadMeals();
       if (meals.length === 0) return;
-      const mealList = document.getElementById('meal-list');
-      mealList.innerHTML = '';
-      meals.forEach(food => {
+      document.getElementById('meal-empty')?.remove();
+      meals.forEach((food, idx) => {
         todayNutrition.sodium += Number(food.sodium) || 0;
         todayNutrition.sugar += Number(food.sugar) || 0;
         todayNutrition.cal += Number(food.cal) || 0;
         todayNutrition.protein += Number(food.protein) || 0;
-        const item = document.createElement('div');
-        item.className = 'meal-item';
-        const sodiumHigh = food.sodium >= 600;
-        item.innerHTML = `
+        renderMealItem(food, idx);
+      });
+      updateNutritionDisplay();
+    }
+
+    // ── 식사 기록 렌더링 (인덱스 포함) ──────────
+    function renderMealItem(food, idx) {
+      const mealList = document.getElementById('meal-list');
+      const sodiumHigh = food.sodium >= 600;
+      const wrap = document.createElement('div');
+      wrap.className = 'meal-item-wrap';
+      wrap.dataset.idx = idx;
+      wrap.innerHTML = `
+        <div class="meal-delete-bg"><span>삭제</span></div>
+        <div class="meal-item" data-idx="${idx}">
           <div class="meal-emoji">${food.emoji || '🍽️'}</div>
           <div class="meal-info">
             <div class="meal-name">${food.name}</div>
@@ -491,10 +501,122 @@
           <div class="meal-nutrients">
             <div class="meal-cal">${food.cal} kcal</div>
             <div class="meal-sodium ${sodiumHigh ? 'high' : 'ok'}">나트륨 ${Number(food.sodium).toLocaleString()}mg ${sodiumHigh ? '↑' : '✓'}</div>
-          </div>`;
-        mealList.appendChild(item);
+          </div>
+        </div>`;
+      mealList.appendChild(wrap);
+      attachSwipe(wrap);
+    }
+
+    // ── 스와이프 삭제 ──────────────────────────
+    function attachSwipe(wrap) {
+      const item = wrap.querySelector('.meal-item');
+      let startX = 0, currentX = 0, isDragging = false;
+      const THRESHOLD = 60; // 이 거리 이상 밀면 삭제 버튼 노출
+
+      // 터치
+      item.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        item.style.transition = 'none';
+      }, { passive: true });
+
+      item.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX - startX;
+        if (currentX < 0) item.style.transform = `translateX(${Math.max(currentX, -80)}px)`;
+      }, { passive: true });
+
+      item.addEventListener('touchend', () => {
+        isDragging = false;
+        item.style.transition = 'transform 0.25s ease';
+        if (currentX < -THRESHOLD) {
+          item.style.transform = 'translateX(-80px)';
+          item.classList.add('swiped');
+          // 삭제 버튼 클릭 대기 — 다른 곳 터치 시 닫기
+          setTimeout(() => {
+            document.addEventListener('touchstart', function closeSwipe(e) {
+              if (!wrap.contains(e.target)) {
+                item.style.transform = 'translateX(0)';
+                item.classList.remove('swiped');
+                document.removeEventListener('touchstart', closeSwipe);
+              }
+            }, { once: false });
+          }, 100);
+        } else {
+          item.style.transform = 'translateX(0)';
+          item.classList.remove('swiped');
+        }
+        currentX = 0;
       });
+
+      // 마우스 (PC 테스트용)
+      item.addEventListener('mousedown', e => {
+        startX = e.clientX;
+        isDragging = true;
+        item.style.transition = 'none';
+      });
+      document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        currentX = e.clientX - startX;
+        if (currentX < 0) item.style.transform = `translateX(${Math.max(currentX, -80)}px)`;
+      });
+      document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        item.style.transition = 'transform 0.25s ease';
+        if (currentX < -THRESHOLD) {
+          item.style.transform = 'translateX(-80px)';
+          item.classList.add('swiped');
+        } else {
+          item.style.transform = 'translateX(0)';
+          item.classList.remove('swiped');
+        }
+        currentX = 0;
+      });
+
+      // 삭제 버튼(빨간 영역) 클릭
+      wrap.querySelector('.meal-delete-bg').addEventListener('click', () => deleteMeal(wrap));
+      // 스와이프된 상태에서 카드 클릭해도 삭제
+      item.addEventListener('click', () => {
+        if (item.classList.contains('swiped')) deleteMeal(wrap);
+      });
+    }
+
+    // ── 삭제 실행 ──────────────────────────────
+    function deleteMeal(wrap) {
+      const idx = parseInt(wrap.dataset.idx);
+      const meals = loadMeals();
+      const removed = meals[idx];
+      meals.splice(idx, 1);
+      saveMeals(meals);
+
+      // 영양 누적에서 빼기
+      todayNutrition.sodium -= Number(removed.sodium) || 0;
+      todayNutrition.sugar  -= Number(removed.sugar)  || 0;
+      todayNutrition.cal    -= Number(removed.cal)    || 0;
+      todayNutrition.protein-= Number(removed.protein)|| 0;
+      // 음수 방지
+      todayNutrition.sodium  = Math.max(0, todayNutrition.sodium);
+      todayNutrition.sugar   = Math.max(0, todayNutrition.sugar);
+      todayNutrition.cal     = Math.max(0, todayNutrition.cal);
+      todayNutrition.protein = Math.max(0, todayNutrition.protein);
       updateNutritionDisplay();
+
+      // 애니메이션 후 DOM 제거
+      wrap.classList.add('removing');
+      setTimeout(() => {
+        wrap.remove();
+        // 인덱스 재정렬
+        document.querySelectorAll('.meal-item-wrap').forEach((w, i) => {
+          w.dataset.idx = i;
+          w.querySelector('.meal-item').dataset.idx = i;
+        });
+        // 기록 없으면 빈 메시지 복원
+        if (loadMeals().length === 0) {
+          const mealList = document.getElementById('meal-list');
+          mealList.innerHTML = '<div id="meal-empty" style="text-align:center; padding: 20px; color: var(--gray-mid); font-size:14px;">아직 기록된 식사가 없습니다.<br>사진을 찍어서 분석해보세요 📷</div>';
+        }
+      }, 300);
     }
 
     // ── 설정 화면 ──────────────────────────────
@@ -506,22 +628,17 @@
       selectedDiseases = { hyp: patient.hyp || false, dia: patient.dia || false };
       updateDiseaseButtons();
     }
-    function toggleDisease(type) {
-      selectedDiseases[type] = !selectedDiseases[type];
-      updateDiseaseButtons();
-    }
+    function toggleDisease(type) { selectedDiseases[type] = !selectedDiseases[type]; updateDiseaseButtons(); }
     function updateDiseaseButtons() {
       document.getElementById('btn-hyp').className = 'disease-btn' + (selectedDiseases.hyp ? ' active' : '');
       document.getElementById('btn-dia').className = 'disease-btn' + (selectedDiseases.dia ? ' active-orange' : '');
     }
     function savePatient() {
       const name = document.getElementById('input-name').value.trim();
-      const age = document.getElementById('input-age').value.trim();
+      const age  = document.getElementById('input-age').value.trim();
       if (!name) { alert('이름을 입력해 주세요.'); return; }
-      if (!age) { alert('나이를 입력해 주세요.'); return; }
-      if (!selectedDiseases.hyp && !selectedDiseases.dia) {
-        alert('보유 질환을 하나 이상 선택해 주세요.'); return;
-      }
+      if (!age)  { alert('나이를 입력해 주세요.'); return; }
+      if (!selectedDiseases.hyp && !selectedDiseases.dia) { alert('보유 질환을 하나 이상 선택해 주세요.'); return; }
       patient = { name, age, hyp: selectedDiseases.hyp, dia: selectedDiseases.dia };
       localStorage.setItem('patient_info', JSON.stringify(patient));
       showMainScreen();
@@ -532,9 +649,7 @@
     function showMainScreen() {
       document.getElementById('setup-screen').style.display = 'none';
       document.getElementById('main-screen').style.display = 'block';
-      updatePatientBanner();
-      updateAlertBox();
-      updateRecommendations();
+      updatePatientBanner(); updateAlertBox(); updateRecommendations();
     }
     function updatePatientBanner() {
       document.getElementById('banner-name').textContent = `${patient.name} 어르신 (${patient.age}세)`;
@@ -545,76 +660,67 @@
     }
     function updateAlertBox() {
       const alertBox = document.getElementById('alert-box');
-      const sodPct = Math.round((todayNutrition.sodium / 2000) * 100);
-      const sugarPct = Math.round((todayNutrition.sugar / 50) * 100);
+      const sodPct   = Math.round((todayNutrition.sodium / 2000) * 100);
+      const sugarPct = Math.round((todayNutrition.sugar  / 50)   * 100);
       if (patient.hyp && sodPct >= 70) {
         alertBox.style.display = 'flex';
         document.getElementById('alert-title').textContent = '나트륨 주의';
-        document.getElementById('alert-msg').textContent =
-          `오늘 나트륨 섭취량이 권장량의 ${sodPct}%에 달했습니다. 저녁은 싱겁게 드세요.`;
+        document.getElementById('alert-msg').textContent = `오늘 나트륨 섭취량이 권장량의 ${sodPct}%에 달했습니다. 저녁은 싱겁게 드세요.`;
       } else if (patient.dia && sugarPct >= 70) {
         alertBox.style.display = 'flex';
         document.getElementById('alert-title').textContent = '혈당 주의';
-        document.getElementById('alert-msg').textContent =
-          `오늘 당류 섭취량이 권장량의 ${sugarPct}%에 달했습니다. 단 음식을 피해 주세요.`;
+        document.getElementById('alert-msg').textContent = `오늘 당류 섭취량이 권장량의 ${sugarPct}%에 달했습니다. 단 음식을 피해 주세요.`;
       } else {
         alertBox.style.display = 'none';
       }
     }
     function updateNutritionDisplay() {
       const s = todayNutrition;
-      const sodPct = Math.min(Math.round((s.sodium / 2000) * 100), 100);
-      const sugarPct = Math.min(Math.round((s.sugar / 50) * 100), 100);
-      const calPct = Math.min(Math.round((s.cal / 1800) * 100), 100);
-      const proteinPct = Math.min(Math.round((s.protein / 60) * 100), 100);
-      document.getElementById('val-sodium').innerHTML = s.sodium.toLocaleString() + '<span class="nutrient-unit">mg</span>';
-      document.getElementById('val-sugar').innerHTML = s.sugar + '<span class="nutrient-unit">g</span>';
-      document.getElementById('val-cal').innerHTML = s.cal.toLocaleString() + '<span class="nutrient-unit">kcal</span>';
+      const sodPct     = Math.min(Math.round((s.sodium  / 2000) * 100), 100);
+      const sugarPct   = Math.min(Math.round((s.sugar   / 50)   * 100), 100);
+      const calPct     = Math.min(Math.round((s.cal     / 1800) * 100), 100);
+      const proteinPct = Math.min(Math.round((s.protein / 60)   * 100), 100);
+      document.getElementById('val-sodium').innerHTML  = s.sodium.toLocaleString() + '<span class="nutrient-unit">mg</span>';
+      document.getElementById('val-sugar').innerHTML   = s.sugar  + '<span class="nutrient-unit">g</span>';
+      document.getElementById('val-cal').innerHTML     = s.cal.toLocaleString()    + '<span class="nutrient-unit">kcal</span>';
       document.getElementById('val-protein').innerHTML = s.protein + '<span class="nutrient-unit">g</span>';
-      document.getElementById('bar-sodium').style.width = sodPct + '%';
-      document.getElementById('bar-sugar').style.width = sugarPct + '%';
-      document.getElementById('bar-cal').style.width = calPct + '%';
+      document.getElementById('bar-sodium').style.width  = sodPct     + '%';
+      document.getElementById('bar-sugar').style.width   = sugarPct   + '%';
+      document.getElementById('bar-cal').style.width     = calPct     + '%';
       document.getElementById('bar-protein').style.width = proteinPct + '%';
-      const sodCard = document.getElementById('card-sodium');
-      sodCard.className = 'nutrient-card ' + (sodPct >= 70 ? 'danger' : 'safe');
-      document.getElementById('bar-sodium').style.background = sodPct >= 70 ? 'var(--danger)' : 'var(--safe)';
-      const sugarCard = document.getElementById('card-sugar');
-      sugarCard.className = 'nutrient-card ' + (sugarPct >= 70 ? 'danger' : 'safe');
-      document.getElementById('bar-sugar').style.background = sugarPct >= 70 ? 'var(--danger)' : 'var(--safe)';
+      document.getElementById('card-sodium').className = 'nutrient-card ' + (sodPct   >= 70 ? 'danger' : 'safe');
+      document.getElementById('bar-sodium').style.background  = sodPct   >= 70 ? 'var(--danger)' : 'var(--safe)';
+      document.getElementById('card-sugar').className  = 'nutrient-card ' + (sugarPct >= 70 ? 'danger' : 'safe');
+      document.getElementById('bar-sugar').style.background   = sugarPct >= 70 ? 'var(--danger)' : 'var(--safe)';
       updateAlertBox();
     }
-
     function updateRecommendations() {
       const section = document.getElementById('recommend-section');
-      const list = document.getElementById('recommend-list');
+      const list    = document.getElementById('recommend-list');
       section.style.display = 'block';
       list.innerHTML = '';
-      const hypMenus = [
-        { emoji: '🐟', name: '생선구이 + 두부조림', desc: '저염·저당 / 나트륨 400mg 이하 / 단백질 보충' },
-        { emoji: '🥦', name: '잡곡밥 + 채소볶음', desc: '저나트륨 / 식이섬유 풍부 / 혈압 조절' },
+      const hypMenus  = [
+        { emoji:'🐟', name:'생선구이 + 두부조림', desc:'저염·저당 / 나트륨 400mg 이하 / 단백질 보충' },
+        { emoji:'🥦', name:'잡곡밥 + 채소볶음',  desc:'저나트륨 / 식이섬유 풍부 / 혈압 조절' },
       ];
-      const diaMenus = [
-        { emoji: '🥗', name: '현미밥 + 나물무침', desc: '혈당 관리 / 식이섬유 풍부 / 저당' },
-        { emoji: '🐔', name: '닭가슴살 + 샐러드', desc: '고단백 저탄수화물 / 혈당 부담 낮음' },
+      const diaMenus  = [
+        { emoji:'🥗', name:'현미밥 + 나물무침',  desc:'혈당 관리 / 식이섬유 풍부 / 저당' },
+        { emoji:'🐔', name:'닭가슴살 + 샐러드',  desc:'고단백 저탄수화물 / 혈당 부담 낮음' },
       ];
-      const bothMenus = [
-        { emoji: '🐟', name: '생선구이 + 현미밥', desc: '저염·저당 / 단백질 풍부 / 혈압·혈당 관리' },
-      ];
+      const bothMenus = [{ emoji:'🐟', name:'생선구이 + 현미밥', desc:'저염·저당 / 단백질 풍부 / 혈압·혈당 관리' }];
       let menus = [];
       if (patient.hyp && patient.dia) menus = bothMenus.concat(hypMenus[1]);
       else if (patient.hyp) menus = hypMenus;
       else if (patient.dia) menus = diaMenus;
       menus.forEach(m => {
-        list.innerHTML += `
-          <div class="recommend-card">
-            <div class="recommend-emoji">${m.emoji}</div>
-            <div class="recommend-info"><h4>${m.name}</h4><p>${m.desc}</p></div>
-            <div class="recommend-tag">추천</div>
-          </div>`;
+        list.innerHTML += `<div class="recommend-card">
+          <div class="recommend-emoji">${m.emoji}</div>
+          <div class="recommend-info"><h4>${m.name}</h4><p>${m.desc}</p></div>
+          <div class="recommend-tag">추천</div></div>`;
       });
     }
 
-    // ── API 키 관리 ──────────────────────────────
+    // ── API 키 ──────────────────────────────────
     function promptApiKey() {
       const key = prompt('Gemini API 키를 입력하세요:\n(aistudio.google.com에서 발급)');
       if (key && key.trim()) {
@@ -627,41 +733,33 @@
       }
     }
 
-    // ── 분석 시작 ──────────────────────────────
+    // ── 분석 ────────────────────────────────────
     const loadingMessages = ["음식 종류 인식 중...", "영양 성분 분석 중...", "고혈압·당뇨 위험도 계산 중...", "맞춤 식단 진단 결과 생성 중..."];
-
     function startAnalysis(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
       const loading = document.getElementById('loading');
-      const stepEl = document.getElementById('loading-step');
+      const stepEl  = document.getElementById('loading-step');
       loading.classList.add('active');
       let step = 0;
       stepEl.textContent = loadingMessages[0];
-      const interval = setInterval(() => {
-        step++;
-        if (step < loadingMessages.length) stepEl.textContent = loadingMessages[step];
-      }, 700);
-      if (GEMINI_API_KEY) {
-        analyzeWithGemini(file, interval, loading, input);
-      } else {
-        clearInterval(interval);
-        loading.classList.remove('active');
-        input.value = '';
+      const interval = setInterval(() => { step++; if (step < loadingMessages.length) stepEl.textContent = loadingMessages[step]; }, 700);
+      if (GEMINI_API_KEY) analyzeWithGemini(file, interval, loading, input);
+      else {
+        clearInterval(interval); loading.classList.remove('active'); input.value = '';
         alert('API 키가 설정되지 않았습니다. 화면 상단의 🔑 버튼을 눌러 Gemini API 키를 입력해 주세요.');
       }
     }
 
     async function analyzeWithGemini(file, interval, loading, input) {
       try {
-        const base64 = await fileToBase64(file);
+        const base64  = await fileToBase64(file);
         const mimeType = file.type || 'image/jpeg';
         const diseases = [];
         if (patient.hyp) diseases.push('고혈압');
         if (patient.dia) diseases.push('당뇨');
         const diseaseStr = diseases.join('·') || '만성질환';
 
-        // ★★★ 개선된 프롬프트 ★★★
         const prompt = `당신은 한국 음식 전문 영양사입니다. 사진 속 음식을 정확히 분석해야 합니다.
 
 [1단계: 음식 식별 — 반드시 아래 기준으로 판단하세요]
@@ -708,77 +806,51 @@
 
         const response = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          { method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({
-              contents: [{ parts: [
-                { inline_data: { mime_type: mimeType, data: base64 } },
-                { text: prompt }
-              ]}],
-              generationConfig: {
-                temperature: 0.1,
-                topP: 0.8,
-                topK: 10
-              }
+              contents:[{parts:[{inline_data:{mime_type:mimeType,data:base64}},{text:prompt}]}],
+              generationConfig:{temperature:0.1,topP:0.8,topK:10}
             })
           }
         );
-
         const data = await response.json();
-        clearInterval(interval);
-        loading.classList.remove('active');
-
+        clearInterval(interval); loading.classList.remove('active');
         if (data.candidates && data.candidates[0]) {
           const rawText = data.candidates[0].content.parts[0].text;
           try {
-            let clean = rawText.replace(/```json|```/g, '').trim();
-            const jsonStart = clean.indexOf('{');
-            const jsonEnd = clean.lastIndexOf('}');
-            if (jsonStart !== -1 && jsonEnd !== -1) {
-              clean = clean.substring(jsonStart, jsonEnd + 1);
-            }
+            let clean = rawText.replace(/```json|```/g,'').trim();
+            const s = clean.indexOf('{'), e = clean.lastIndexOf('}');
+            if (s !== -1 && e !== -1) clean = clean.substring(s, e+1);
             showResult(JSON.parse(clean));
-          } catch(e) {
-            loading.classList.remove('active');
-            alert('AI 응답 파싱 오류입니다.\n음식명 수정 버튼으로 직접 수정하거나 다시 시도해 주세요.\n\nAI 응답: ' + rawText.substring(0, 120));
+          } catch(err) {
+            alert('AI 응답 파싱 오류입니다.\n음식명 수정 버튼으로 직접 수정하거나 다시 시도해 주세요.\n\nAI 응답: ' + rawText.substring(0,120));
           }
-        } else {
-          throw new Error('Gemini 응답이 비어있습니다. API 키를 확인해 주세요.');
-        }
+        } else throw new Error('Gemini 응답이 비어있습니다. API 키를 확인해 주세요.');
       } catch(err) {
-        clearInterval(interval);
-        loading.classList.remove('active');
+        clearInterval(interval); loading.classList.remove('active');
         alert('AI 분석 중 오류가 발생했습니다:\n' + err.message);
       }
       input.value = '';
     }
 
     function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      return new Promise((res,rej) => { const r = new FileReader(); r.onload = ()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
     }
 
     function showResult(food) {
       currentFood = food;
-      document.getElementById('food-emoji').textContent = food.emoji || '🍽️';
-      document.getElementById('food-name').textContent = food.name || '음식';
-      document.getElementById('food-amount').textContent = food.amount || '';
-      document.getElementById('v-cal').textContent = food.cal ?? '-';
-      document.getElementById('v-sodium').textContent = Number(food.sodium).toLocaleString();
-      document.getElementById('v-sugar').textContent = food.sugar ?? '-';
-      document.getElementById('v-carb').textContent = food.carb ?? '-';
+      document.getElementById('food-emoji').textContent  = food.emoji || '🍽️';
+      document.getElementById('food-name').textContent   = food.name  || '음식';
+      document.getElementById('food-amount').textContent = food.amount|| '';
+      document.getElementById('v-cal').textContent     = food.cal     ?? '-';
+      document.getElementById('v-sodium').textContent  = Number(food.sodium).toLocaleString();
+      document.getElementById('v-sugar').textContent   = food.sugar   ?? '-';
+      document.getElementById('v-carb').textContent    = food.carb    ?? '-';
       document.getElementById('v-protein').textContent = food.protein ?? '-';
-      document.getElementById('v-fat').textContent = food.fat ?? '-';
-
-      document.getElementById('n-sodium').className = food.sodium >= 600 ? 'analysis-nutrient warn' : 'analysis-nutrient good';
-      document.getElementById('n-sugar').className = food.sugar >= 25 ? 'analysis-nutrient warn' : 'analysis-nutrient';
-      document.getElementById('n-protein').className = food.protein >= 15 ? 'analysis-nutrient good' : 'analysis-nutrient';
-
+      document.getElementById('v-fat').textContent     = food.fat     ?? '-';
+      document.getElementById('n-sodium').className = food.sodium  >= 600 ? 'analysis-nutrient warn' : 'analysis-nutrient good';
+      document.getElementById('n-sugar').className  = food.sugar   >= 25  ? 'analysis-nutrient warn' : 'analysis-nutrient';
+      document.getElementById('n-protein').className= food.protein >= 15  ? 'analysis-nutrient good' : 'analysis-nutrient';
       const hypBox = document.getElementById('hyp-box');
       if (patient.hyp) {
         hypBox.style.display = 'block';
@@ -786,20 +858,13 @@
         if (food.hypWarning) {
           hypBox.className = 'diagnosis-box danger-box';
           document.getElementById('hyp-title').textContent = '⚠️ 고혈압 주의';
-          document.getElementById('hyp-msg').textContent = (food.hypMessage && food.hypMessage !== '해당없음')
-            ? food.hypMessage
-            : `나트륨 ${Number(food.sodium).toLocaleString()}mg은 하루 권장량의 ${sodPct}%입니다. 나트륨 섭취를 줄여주세요.`;
+          document.getElementById('hyp-msg').textContent = (food.hypMessage && food.hypMessage !== '해당없음') ? food.hypMessage : `나트륨 ${Number(food.sodium).toLocaleString()}mg은 하루 권장량의 ${sodPct}%입니다. 나트륨 섭취를 줄여주세요.`;
         } else {
           hypBox.className = 'diagnosis-box safe-box';
           document.getElementById('hyp-title').textContent = '✅ 고혈압 양호';
-          document.getElementById('hyp-msg').textContent = (food.hypMessage && food.hypMessage !== '해당없음')
-            ? food.hypMessage
-            : `나트륨 ${Number(food.sodium).toLocaleString()}mg으로 권장량의 ${sodPct}% 수준입니다.`;
+          document.getElementById('hyp-msg').textContent = (food.hypMessage && food.hypMessage !== '해당없음') ? food.hypMessage : `나트륨 ${Number(food.sodium).toLocaleString()}mg으로 권장량의 ${sodPct}% 수준입니다.`;
         }
-      } else {
-        hypBox.style.display = 'none';
-      }
-
+      } else hypBox.style.display = 'none';
       const diaBox = document.getElementById('dia-box');
       if (patient.dia) {
         diaBox.style.display = 'block';
@@ -807,23 +872,16 @@
         if (food.diaWarning) {
           diaBox.className = 'diagnosis-box danger-box';
           document.getElementById('dia-title').textContent = '⚠️ 당뇨 주의';
-          document.getElementById('dia-msg').textContent = (food.diaMessage && food.diaMessage !== '해당없음')
-            ? food.diaMessage
-            : `당류 ${food.sugar}g은 하루 권장량의 ${sugarPct}%입니다. 혈당 상승에 주의하세요.`;
+          document.getElementById('dia-msg').textContent = (food.diaMessage && food.diaMessage !== '해당없음') ? food.diaMessage : `당류 ${food.sugar}g은 하루 권장량의 ${sugarPct}%입니다. 혈당 상승에 주의하세요.`;
         } else {
           diaBox.className = 'diagnosis-box safe-box';
           document.getElementById('dia-title').textContent = '✅ 당뇨 양호';
-          document.getElementById('dia-msg').textContent = (food.diaMessage && food.diaMessage !== '해당없음')
-            ? food.diaMessage
-            : `당류 ${food.sugar}g으로 혈당 부담이 적습니다.`;
+          document.getElementById('dia-msg').textContent = (food.diaMessage && food.diaMessage !== '해당없음') ? food.diaMessage : `당류 ${food.sugar}g으로 혈당 부담이 적습니다.`;
         }
-      } else {
-        diaBox.style.display = 'none';
-      }
-
-      todayNutrition.sodium += Number(food.sodium) || 0;
-      todayNutrition.sugar += Number(food.sugar) || 0;
-      todayNutrition.cal += Number(food.cal) || 0;
+      } else diaBox.style.display = 'none';
+      todayNutrition.sodium  += Number(food.sodium)  || 0;
+      todayNutrition.sugar   += Number(food.sugar)   || 0;
+      todayNutrition.cal     += Number(food.cal)     || 0;
       todayNutrition.protein += Number(food.protein) || 0;
       updateNutritionDisplay();
       addMealRecord(food);
@@ -831,37 +889,19 @@
     }
 
     function addMealRecord(food) {
-      const mealList = document.getElementById('meal-list');
-      const empty = mealList.querySelector('div[style]');
-      if (empty) empty.remove();
+      document.getElementById('meal-empty')?.remove();
       const now = new Date();
-      const h = now.getHours();
-      const m = String(now.getMinutes()).padStart(2, '0');
+      const h = now.getHours(), m = String(now.getMinutes()).padStart(2,'0');
       const period = h < 12 ? '오전' : '오후';
       const h12 = h > 12 ? h - 12 : h;
       const timeStr = `방금 · ${period} ${h12}:${m}`;
-      const sodiumHigh = food.sodium >= 600;
       const meals = loadMeals();
       meals.push({ ...food, timeStr });
       saveMeals(meals);
-      const item = document.createElement('div');
-      item.className = 'meal-item';
-      item.innerHTML = `
-        <div class="meal-emoji">${food.emoji || '🍽️'}</div>
-        <div class="meal-info">
-          <div class="meal-name">${food.name}</div>
-          <div class="meal-time">${timeStr}</div>
-        </div>
-        <div class="meal-nutrients">
-          <div class="meal-cal">${food.cal} kcal</div>
-          <div class="meal-sodium ${sodiumHigh ? 'high' : 'ok'}">나트륨 ${Number(food.sodium).toLocaleString()}mg ${sodiumHigh ? '↑' : '✓'}</div>
-        </div>`;
-      mealList.appendChild(item);
+      renderMealItem({ ...food, timeStr }, meals.length - 1);
     }
 
-    function closeModal(event) {
-      if (event.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('active');
-    }
+    function closeModal(e) { if (e.target === document.getElementById('modal')) document.getElementById('modal').classList.remove('active'); }
     function closeModalBtn() { document.getElementById('modal').classList.remove('active'); }
 
     let currentFood = null;
