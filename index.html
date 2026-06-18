@@ -53,7 +53,6 @@
     .setup-input:focus { border-color: var(--green); }
     .setup-input.age-input { width: 100px; }
 
-    /* 질환 선택 토글 */
     .disease-toggles { display: flex; gap: 10px; }
     .disease-btn {
       flex: 1; padding: 14px;
@@ -441,18 +440,13 @@
     let todayNutrition = { sodium: 0, sugar: 0, cal: 0, protein: 0 };
     let selectedDiseases = { hyp: false, dia: false };
 
-    // 오늘 날짜 키 생성 (날짜가 바뀌면 자동 초기화)
     function getTodayKey() {
       const d = new Date();
       return `meals_${d.getFullYear()}_${d.getMonth()+1}_${d.getDate()}`;
     }
-
-    // 식사 기록 저장
     function saveMeals(meals) {
       localStorage.setItem(getTodayKey(), JSON.stringify(meals));
     }
-
-    // 식사 기록 불러오기
     function loadMeals() {
       const saved = localStorage.getItem(getTodayKey());
       return saved ? JSON.parse(saved) : [];
@@ -464,7 +458,7 @@
       if (saved) {
         patient = JSON.parse(saved);
         showMainScreen();
-        loadSavedMeals(); // 저장된 식사 기록 복원
+        loadSavedMeals();
       } else {
         showSetupScreen();
       }
@@ -475,23 +469,16 @@
       }
     }
 
-    // 저장된 식사 기록 화면에 복원
     function loadSavedMeals() {
       const meals = loadMeals();
       if (meals.length === 0) return;
-
       const mealList = document.getElementById('meal-list');
-      // 빈 상태 메시지 제거
       mealList.innerHTML = '';
-
       meals.forEach(food => {
-        // 영양 누적 복원
         todayNutrition.sodium += Number(food.sodium) || 0;
         todayNutrition.sugar += Number(food.sugar) || 0;
         todayNutrition.cal += Number(food.cal) || 0;
         todayNutrition.protein += Number(food.protein) || 0;
-
-        // 화면에 아이템 추가
         const item = document.createElement('div');
         item.className = 'meal-item';
         const sodiumHigh = food.sodium >= 600;
@@ -507,7 +494,6 @@
           </div>`;
         mealList.appendChild(item);
       });
-
       updateNutritionDisplay();
     }
 
@@ -520,19 +506,14 @@
       selectedDiseases = { hyp: patient.hyp || false, dia: patient.dia || false };
       updateDiseaseButtons();
     }
-
     function toggleDisease(type) {
       selectedDiseases[type] = !selectedDiseases[type];
       updateDiseaseButtons();
     }
-
     function updateDiseaseButtons() {
-      const hypBtn = document.getElementById('btn-hyp');
-      const diaBtn = document.getElementById('btn-dia');
-      hypBtn.className = 'disease-btn' + (selectedDiseases.hyp ? ' active' : '');
-      diaBtn.className = 'disease-btn' + (selectedDiseases.dia ? ' active-orange' : '');
+      document.getElementById('btn-hyp').className = 'disease-btn' + (selectedDiseases.hyp ? ' active' : '');
+      document.getElementById('btn-dia').className = 'disease-btn' + (selectedDiseases.dia ? ' active-orange' : '');
     }
-
     function savePatient() {
       const name = document.getElementById('input-name').value.trim();
       const age = document.getElementById('input-age').value.trim();
@@ -545,7 +526,6 @@
       localStorage.setItem('patient_info', JSON.stringify(patient));
       showMainScreen();
     }
-
     function editPatient() { showSetupScreen(); }
 
     // ── 메인 화면 ──────────────────────────────
@@ -556,7 +536,6 @@
       updateAlertBox();
       updateRecommendations();
     }
-
     function updatePatientBanner() {
       document.getElementById('banner-name').textContent = `${patient.name} 어르신 (${patient.age}세)`;
       const badges = document.getElementById('banner-badges');
@@ -564,12 +543,10 @@
       if (patient.hyp) badges.innerHTML += '<span class="badge">고혈압</span>';
       if (patient.dia) badges.innerHTML += '<span class="badge">당뇨</span>';
     }
-
     function updateAlertBox() {
       const alertBox = document.getElementById('alert-box');
       const sodPct = Math.round((todayNutrition.sodium / 2000) * 100);
       const sugarPct = Math.round((todayNutrition.sugar / 50) * 100);
-
       if (patient.hyp && sodPct >= 70) {
         alertBox.style.display = 'flex';
         document.getElementById('alert-title').textContent = '나트륨 주의';
@@ -584,44 +561,34 @@
         alertBox.style.display = 'none';
       }
     }
-
     function updateNutritionDisplay() {
       const s = todayNutrition;
       const sodPct = Math.min(Math.round((s.sodium / 2000) * 100), 100);
       const sugarPct = Math.min(Math.round((s.sugar / 50) * 100), 100);
       const calPct = Math.min(Math.round((s.cal / 1800) * 100), 100);
       const proteinPct = Math.min(Math.round((s.protein / 60) * 100), 100);
-
       document.getElementById('val-sodium').innerHTML = s.sodium.toLocaleString() + '<span class="nutrient-unit">mg</span>';
       document.getElementById('val-sugar').innerHTML = s.sugar + '<span class="nutrient-unit">g</span>';
       document.getElementById('val-cal').innerHTML = s.cal.toLocaleString() + '<span class="nutrient-unit">kcal</span>';
       document.getElementById('val-protein').innerHTML = s.protein + '<span class="nutrient-unit">g</span>';
-
       document.getElementById('bar-sodium').style.width = sodPct + '%';
       document.getElementById('bar-sugar').style.width = sugarPct + '%';
       document.getElementById('bar-cal').style.width = calPct + '%';
       document.getElementById('bar-protein').style.width = proteinPct + '%';
-
-      // 나트륨 카드 색상
       const sodCard = document.getElementById('card-sodium');
       sodCard.className = 'nutrient-card ' + (sodPct >= 70 ? 'danger' : 'safe');
       document.getElementById('bar-sodium').style.background = sodPct >= 70 ? 'var(--danger)' : 'var(--safe)';
-
-      // 당류 카드 색상
       const sugarCard = document.getElementById('card-sugar');
       sugarCard.className = 'nutrient-card ' + (sugarPct >= 70 ? 'danger' : 'safe');
       document.getElementById('bar-sugar').style.background = sugarPct >= 70 ? 'var(--danger)' : 'var(--safe)';
-
       updateAlertBox();
     }
 
-    // ── 질환별 식단 추천 업데이트 ──────────────
     function updateRecommendations() {
       const section = document.getElementById('recommend-section');
       const list = document.getElementById('recommend-list');
       section.style.display = 'block';
       list.innerHTML = '';
-
       const hypMenus = [
         { emoji: '🐟', name: '생선구이 + 두부조림', desc: '저염·저당 / 나트륨 400mg 이하 / 단백질 보충' },
         { emoji: '🥦', name: '잡곡밥 + 채소볶음', desc: '저나트륨 / 식이섬유 풍부 / 혈압 조절' },
@@ -633,20 +600,15 @@
       const bothMenus = [
         { emoji: '🐟', name: '생선구이 + 현미밥', desc: '저염·저당 / 단백질 풍부 / 혈압·혈당 관리' },
       ];
-
       let menus = [];
       if (patient.hyp && patient.dia) menus = bothMenus.concat(hypMenus[1]);
       else if (patient.hyp) menus = hypMenus;
       else if (patient.dia) menus = diaMenus;
-
       menus.forEach(m => {
         list.innerHTML += `
           <div class="recommend-card">
             <div class="recommend-emoji">${m.emoji}</div>
-            <div class="recommend-info">
-              <h4>${m.name}</h4>
-              <p>${m.desc}</p>
-            </div>
+            <div class="recommend-info"><h4>${m.name}</h4><p>${m.desc}</p></div>
             <div class="recommend-tag">추천</div>
           </div>`;
       });
@@ -667,16 +629,6 @@
 
     // ── 분석 시작 ──────────────────────────────
     const loadingMessages = ["음식 종류 인식 중...", "영양 성분 분석 중...", "고혈압·당뇨 위험도 계산 중...", "맞춤 식단 진단 결과 생성 중..."];
-    const foodDB = [
-      { emoji:"🍱", name:"비빔밥", amount:"1인분 (약 450g)", cal:520, sodium:980, sugar:18, carb:72, protein:22, fat:14, hypWarning:true, diaWarning:false },
-      { emoji:"🍜", name:"된장찌개 + 밥", amount:"1인분 (약 500g)", cal:480, sodium:1320, sugar:8, carb:68, protein:18, fat:10, hypWarning:true, diaWarning:false },
-      { emoji:"🐟", name:"생선구이 + 나물밥", amount:"1인분 (약 400g)", cal:390, sodium:420, sugar:5, carb:52, protein:28, fat:8, hypWarning:false, diaWarning:false },
-      { emoji:"🍖", name:"삼겹살 + 쌈채소", amount:"1인분 (약 300g)", cal:680, sodium:860, sugar:3, carb:15, protein:32, fat:48, hypWarning:true, diaWarning:false },
-      { emoji:"🥗", name:"채소비빔밥", amount:"1인분 (약 380g)", cal:420, sodium:560, sugar:12, carb:65, protein:14, fat:6, hypWarning:false, diaWarning:false },
-      { emoji:"🍲", name:"순두부찌개 + 밥", amount:"1인분 (약 520g)", cal:510, sodium:1180, sugar:5, carb:70, protein:20, fat:12, hypWarning:true, diaWarning:false },
-      { emoji:"🥞", name:"팬케이크 + 시럽", amount:"2장 (약 200g)", cal:460, sodium:380, sugar:42, carb:78, protein:10, fat:14, hypWarning:false, diaWarning:true },
-      { emoji:"🍣", name:"연어 샐러드", amount:"1인분 (약 280g)", cal:340, sodium:480, sugar:6, carb:22, protein:30, fat:16, hypWarning:false, diaWarning:false }
-    ];
 
     function startAnalysis(input) {
       if (!input.files || !input.files[0]) return;
@@ -689,7 +641,7 @@
       const interval = setInterval(() => {
         step++;
         if (step < loadingMessages.length) stepEl.textContent = loadingMessages[step];
-      }, 600);
+      }, 700);
       if (GEMINI_API_KEY) {
         analyzeWithGemini(file, interval, loading, input);
       } else {
@@ -709,30 +661,49 @@
         if (patient.dia) diseases.push('당뇨');
         const diseaseStr = diseases.join('·') || '만성질환';
 
-        const prompt = `이 음식 사진을 분석해주세요. 환자는 ${diseaseStr} 환자입니다.
+        // ★★★ 개선된 프롬프트 ★★★
+        const prompt = `당신은 한국 음식 전문 영양사입니다. 사진 속 음식을 정확히 분석해야 합니다.
 
-[반드시 지켜야 할 규칙]
-1. 사진에 실제로 보이는 음식만 기록하세요. 보이지 않는 음식은 절대 추가하지 마세요.
-2. 음식 이름이 확실하지 않으면 가장 가능성이 높은 이름 하나만 적으세요.
-3. 찌개류, 탕류 등은 국물 색깔과 재료를 정확히 보고 판단하세요.
-4. 영양 수치는 사진에 보이는 음식만 기준으로 계산하세요.
+[1단계: 음식 식별 — 반드시 아래 기준으로 판단하세요]
 
-반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트는 절대 포함하지 마세요.
+찌개/국/탕 구분 기준:
+- 된장찌개: 국물이 갈색~황토색, 된장 특유의 탁한 색, 두부·호박·버섯이 보임
+- 김치찌개: 국물이 붉은색, 김치가 건더기로 보임, 돼지고기 또는 참치가 들어있을 수 있음
+- 순두부찌개: 국물이 붉은 주황색, 부드러운 두부 덩어리가 보임
+- 미역국: 국물이 연한 갈색, 미역이 주재료
+- 육개장: 국물이 진한 붉은색, 고사리·대파 등 채소가 많음
+- 설렁탕/곰탕: 국물이 뽀얀 흰색, 고기 덩어리 보임
+
+밥 종류 구분:
+- 비빔밥: 그릇에 밥 위에 여러 색깔 나물이 각각 올려져 있음, 중앙에 달걀이나 고추장
+- 볶음밥: 밥알이 기름에 볶아진 형태, 재료들이 밥과 섞여 있음
+- 흰밥: 단색의 흰쌀밥
+
+[2단계: 식별한 음식의 영양 성분 계산]
+식품의약품안전처 식품영양성분 데이터베이스 기준으로 계산하세요.
+
+[출력 규칙]
+- 반드시 아래 JSON 형식으로만 응답하세요
+- 다른 텍스트, 설명, 마크다운을 절대 포함하지 마세요
+- 숫자는 정수로만 입력하세요 (소수점 없이)
+- name 필드: 음식 이름을 정확하게 한국어로 작성 (예: "된장찌개 + 밥", "김치찌개 + 밥")
+- hypMessage: ${patient.hyp ? '"고혈압 환자를 위한 나트륨 관련 조언 1문장"' : '"해당없음"'}
+- diaMessage: ${patient.dia ? '"당뇨 환자를 위한 혈당 관련 조언 1문장"' : '"해당없음"'}
 
 {
-  "emoji": "사진 속 음식 이모지 1개",
-  "name": "사진에 보이는 음식 이름 (한국어)",
-  "amount": "사진 기준 1인분 (약 XXXg)",
-  "cal": 칼로리숫자,
-  "sodium": 나트륨mg숫자,
-  "sugar": 당류g숫자,
-  "carb": 탄수화물g숫자,
-  "protein": 단백질g숫자,
-  "fat": 지방g숫자,
-  "hypWarning": 나트륨600mg초과시true,
-  "diaWarning": 당류25g초과시true,
-  "hypMessage": "${patient.hyp ? '고혈압 환자를 위한 나트륨 관련 조언 한 문장' : '해당없음'}",
-  "diaMessage": "${patient.dia ? '당뇨 환자를 위한 혈당 관련 조언 한 문장' : '해당없음'}"
+  "emoji": "음식 이모지 1개",
+  "name": "음식 이름",
+  "amount": "1인분 (약 XXXg)",
+  "cal": 칼로리,
+  "sodium": 나트륨mg,
+  "sugar": 당류g,
+  "carb": 탄수화물g,
+  "protein": 단백질g,
+  "fat": 지방g,
+  "hypWarning": 나트륨600이상이면true아니면false,
+  "diaWarning": 당류25이상이면true아니면false,
+  "hypMessage": "${patient.hyp ? '고혈압 환자를 위한 나트륨 관련 조언 1문장' : '해당없음'}",
+  "diaMessage": "${patient.dia ? '당뇨 환자를 위한 혈당 관련 조언 1문장' : '해당없음'}"
 }`;
 
         const response = await fetch(
@@ -745,7 +716,11 @@
                 { inline_data: { mime_type: mimeType, data: base64 } },
                 { text: prompt }
               ]}],
-              generationConfig: { temperature: 0.1 }
+              generationConfig: {
+                temperature: 0.1,
+                topP: 0.8,
+                topK: 10
+              }
             })
           }
         );
@@ -757,9 +732,7 @@
         if (data.candidates && data.candidates[0]) {
           const rawText = data.candidates[0].content.parts[0].text;
           try {
-            // JSON 블록 추출 시도 (```json ... ``` 또는 { ... } 형태 모두 처리)
             let clean = rawText.replace(/```json|```/g, '').trim();
-            // { 로 시작하는 부분만 추출
             const jsonStart = clean.indexOf('{');
             const jsonEnd = clean.lastIndexOf('}');
             if (jsonStart !== -1 && jsonEnd !== -1) {
@@ -767,15 +740,16 @@
             }
             showResult(JSON.parse(clean));
           } catch(e) {
-            // JSON 파싱 실패 시 오류 메시지 표시 (가상 데이터로 숨기지 않음)
             loading.classList.remove('active');
-            alert('AI가 분석 결과를 올바르게 반환하지 못했습니다.\nAI 응답: ' + rawText.substring(0, 100));
+            alert('AI 응답 파싱 오류입니다.\n음식명 수정 버튼으로 직접 수정하거나 다시 시도해 주세요.\n\nAI 응답: ' + rawText.substring(0, 120));
           }
-        } else throw new Error('응답 없음');
+        } else {
+          throw new Error('Gemini 응답이 비어있습니다. API 키를 확인해 주세요.');
+        }
       } catch(err) {
         clearInterval(interval);
         loading.classList.remove('active');
-        alert('AI 분석 중 오류가 발생했습니다: ' + err.message);
+        alert('AI 분석 중 오류가 발생했습니다:\n' + err.message);
       }
       input.value = '';
     }
@@ -805,7 +779,6 @@
       document.getElementById('n-sugar').className = food.sugar >= 25 ? 'analysis-nutrient warn' : 'analysis-nutrient';
       document.getElementById('n-protein').className = food.protein >= 15 ? 'analysis-nutrient good' : 'analysis-nutrient';
 
-      // 고혈압 진단 (환자 질환에 따라 표시 여부 결정)
       const hypBox = document.getElementById('hyp-box');
       if (patient.hyp) {
         hypBox.style.display = 'block';
@@ -813,13 +786,13 @@
         if (food.hypWarning) {
           hypBox.className = 'diagnosis-box danger-box';
           document.getElementById('hyp-title').textContent = '⚠️ 고혈압 주의';
-          document.getElementById('hyp-msg').textContent = food.hypMessage && food.hypMessage !== '해당없음'
+          document.getElementById('hyp-msg').textContent = (food.hypMessage && food.hypMessage !== '해당없음')
             ? food.hypMessage
             : `나트륨 ${Number(food.sodium).toLocaleString()}mg은 하루 권장량의 ${sodPct}%입니다. 나트륨 섭취를 줄여주세요.`;
         } else {
           hypBox.className = 'diagnosis-box safe-box';
           document.getElementById('hyp-title').textContent = '✅ 고혈압 양호';
-          document.getElementById('hyp-msg').textContent = food.hypMessage && food.hypMessage !== '해당없음'
+          document.getElementById('hyp-msg').textContent = (food.hypMessage && food.hypMessage !== '해당없음')
             ? food.hypMessage
             : `나트륨 ${Number(food.sodium).toLocaleString()}mg으로 권장량의 ${sodPct}% 수준입니다.`;
         }
@@ -827,7 +800,6 @@
         hypBox.style.display = 'none';
       }
 
-      // 당뇨 진단
       const diaBox = document.getElementById('dia-box');
       if (patient.dia) {
         diaBox.style.display = 'block';
@@ -835,13 +807,13 @@
         if (food.diaWarning) {
           diaBox.className = 'diagnosis-box danger-box';
           document.getElementById('dia-title').textContent = '⚠️ 당뇨 주의';
-          document.getElementById('dia-msg').textContent = food.diaMessage && food.diaMessage !== '해당없음'
+          document.getElementById('dia-msg').textContent = (food.diaMessage && food.diaMessage !== '해당없음')
             ? food.diaMessage
             : `당류 ${food.sugar}g은 하루 권장량의 ${sugarPct}%입니다. 혈당 상승에 주의하세요.`;
         } else {
           diaBox.className = 'diagnosis-box safe-box';
           document.getElementById('dia-title').textContent = '✅ 당뇨 양호';
-          document.getElementById('dia-msg').textContent = food.diaMessage && food.diaMessage !== '해당없음'
+          document.getElementById('dia-msg').textContent = (food.diaMessage && food.diaMessage !== '해당없음')
             ? food.diaMessage
             : `당류 ${food.sugar}g으로 혈당 부담이 적습니다.`;
         }
@@ -849,25 +821,19 @@
         diaBox.style.display = 'none';
       }
 
-      // 영양 누적 업데이트
       todayNutrition.sodium += Number(food.sodium) || 0;
       todayNutrition.sugar += Number(food.sugar) || 0;
       todayNutrition.cal += Number(food.cal) || 0;
       todayNutrition.protein += Number(food.protein) || 0;
       updateNutritionDisplay();
-
-      // 식사 기록 추가
       addMealRecord(food);
-
       document.getElementById('modal').classList.add('active');
     }
 
     function addMealRecord(food) {
       const mealList = document.getElementById('meal-list');
-      // 빈 상태 메시지 제거
       const empty = mealList.querySelector('div[style]');
       if (empty) empty.remove();
-
       const now = new Date();
       const h = now.getHours();
       const m = String(now.getMinutes()).padStart(2, '0');
@@ -875,12 +841,9 @@
       const h12 = h > 12 ? h - 12 : h;
       const timeStr = `방금 · ${period} ${h12}:${m}`;
       const sodiumHigh = food.sodium >= 600;
-
-      // localStorage에 저장
       const meals = loadMeals();
       meals.push({ ...food, timeStr });
       saveMeals(meals);
-
       const item = document.createElement('div');
       item.className = 'meal-item';
       item.innerHTML = `
@@ -901,7 +864,6 @@
     }
     function closeModalBtn() { document.getElementById('modal').classList.remove('active'); }
 
-    // 음식명 수정
     let currentFood = null;
     function editFoodName() {
       const current = document.getElementById("food-name").textContent;
@@ -910,12 +872,10 @@
         document.getElementById("food-name").textContent = newName.trim();
         if (currentFood) {
           currentFood.name = newName.trim();
-          // localStorage 마지막 기록도 업데이트
           const meals = loadMeals();
           if (meals.length > 0) {
             meals[meals.length - 1].name = newName.trim();
             saveMeals(meals);
-            // 화면의 마지막 식사 기록도 업데이트
             const items = document.querySelectorAll(".meal-item");
             if (items.length > 0) {
               const last = items[items.length - 1];
@@ -927,7 +887,6 @@
       }
     }
 
-    // 시작
     init();
   </script>
 </body>
